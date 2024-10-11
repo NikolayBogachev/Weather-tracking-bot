@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.routing import APIRouter
 
 
-from handlers import router, logger
+from api.handlers import router, logger
 
 from database.db import init_db
 
