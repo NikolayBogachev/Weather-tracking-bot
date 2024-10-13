@@ -29,3 +29,4 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 def init_db():
     Base.metadata.create_all(bind=sync_engine)
+
