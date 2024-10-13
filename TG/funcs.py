@@ -21,19 +21,18 @@ redis = None
 
 async def init_redis():
     global redis
-    # Инициализация Redis
-    redis = await aioredis.from_url("redis://localhost")
+
+    redis = await aioredis.from_url("redis://amvera-nikolaaybogachev-run-weather-bot:6379")
     return redis
 
 
-# Функция для получения погоды из OpenWeatherMap
 async def fetch_weather(city_name):
     base_url = "http://api.openweathermap.org/data/2.5/weather"
     params = {
         "q": city_name,
         "appid": config.API_KEY,
-        "units": "metric",  # Используем метрические единицы (Celsius)
-        "lang": "ru"        # Русский язык для описания погоды
+        "units": "metric",
+        "lang": "ru"
     }
     timeout = aiohttp.ClientTimeout(total=60)
     async with aiohttp.ClientSession(timeout=timeout) as session:
@@ -58,11 +57,10 @@ async def fetch_weather_with_cache(city_name: str, bot, message):
         logger.info(f"Возвращаю погоду для {city_name} из кэша.")
         return weather_data
 
-    # Если данных в кэше нет, делаем запрос в внешний API с повторными попытками
     attempt = 0
     while attempt < MAX_RETRIES:
         try:
-            # Запрос к внешнему API
+
             weather_data = await fetch_weather(city_name)
 
             if weather_data:

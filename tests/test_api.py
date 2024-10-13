@@ -16,13 +16,10 @@ async def test_get_logs_by_user(client, setup_database):
     user_id = 1
     await create_data_2(user_id)
 
-    # Выполните запрос к вашему эндпоинту
     response = await client.get(f"/logs/{user_id}")
 
-    # Проверьте статус-код ответа
     assert response.status_code == 200
 
-    # Проверьте, что возвращенные данные соответствуют ожидаемым
     logs = response.json()
     assert isinstance(logs, list)
     assert len(logs) == 1  # Проверка на количество логов
@@ -37,10 +34,8 @@ async def test_get_logs_by_user_with_dates(client,setup_database):
 
     response = await client.get(f"/logs/{user_id}?start_date=2024-10-01&end_date=2024-10-02")
 
-    # Проверьте статус-код ответа
     assert response.status_code == 200
 
-    # Проверьте, что возвращенные данные соответствуют ожидаемым
     logs = response.json()
     assert isinstance(logs, list)
-    assert len(logs) == 2  # Проверка на количество логов
+    assert len(logs) == 2

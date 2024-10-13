@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from database.models import Base
 
-DATABASE_URL = "sqlite+aiosqlite:///./test.database"  # Используйте SQLite для простоты, замените на PostgreSQL в продакшене
+DATABASE_URL = "sqlite+aiosqlite:///./test.database"
 engine = create_async_engine(DATABASE_URL)
 async_session = async_sessionmaker(
     engine,

@@ -22,4 +22,4 @@ class WeatherRequestLogBase(TunedModel):
 
 
 class WeatherRequestLogResponse(WeatherRequestLogBase):
-    id: int  # Добавляем поле id для ответа
+    id: int

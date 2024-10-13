@@ -17,9 +17,9 @@ def mock_bot(mocker):
 @pytest.fixture
 def mock_message():
     message = AsyncMock()
-    message.reply = AsyncMock()  # Мок метода reply
-    message.from_user.id = 123  # Установите ID пользователя
-    message.text = "/weather"  # Установите текст сообщения
+    message.reply = AsyncMock()
+    message.from_user.id = 123
+    message.text = "/weather"
     return message
 
 

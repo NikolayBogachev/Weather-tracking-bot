@@ -51,14 +51,12 @@ async def log_request(db_session: AsyncSession, user_id: int, command: str, resp
     await db_session.commit()
 
 
-# Получение сохранённого города пользователя
 async def get_user_city(db: AsyncSession, user_id: int) -> Optional[str]:
     result = await db.execute(select(UserSettings).where(user_id == UserSettings.user_id))
     settings = result.scalars().first()
     return settings.city if settings else None
 
 
-# Сохранение нового города для пользователя
 async def save_user_city(db: AsyncSession, user_id: int, city_name: str):
     result = await db.execute(select(UserSettings).where(user_id == UserSettings.user_id))
     settings = result.scalars().first()

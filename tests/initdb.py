@@ -1,9 +1,9 @@
-import asyncio
+
 from datetime import datetime
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy import create_engine, select
+
 from sqlalchemy.orm import sessionmaker
 
 from database.models import Base, WeatherRequest
@@ -33,7 +33,7 @@ async def create_db_and_tables():
 
 
 async def create_data_1():
-    # Добавление стартовых данных, если нужно
+
     async with AsyncSession(engine) as session:
         async with session.begin():
             log = WeatherRequest(
@@ -44,17 +44,17 @@ async def create_data_1():
 
 
 async def create_data_2(user_id):
-    # Создайте пример данных в вашей тестовой базе данных
+
     async with AsyncSession(engine) as session:
         async with session.begin():
-            # Добавьте несколько логов в тестовую базу данных
+
             test_log = WeatherRequest(user_id=user_id, command="test_command", response="test_response")
             session.add(test_log)
             await session.commit()
 
 
 async def create_data_3(user_id):
-    # Создайте пример данных в вашей тестовой базе данных
+
     async with AsyncSession(engine) as session:
         async with session.begin():
             data_to_insert = [
@@ -73,7 +73,7 @@ async def create_data_3(user_id):
             ]
 
             for data in data_to_insert:
-                new_request = WeatherRequest(**data)  # Assuming WeatherRequest is your model
+                new_request = WeatherRequest(**data)
                 session.add(new_request)
 
             await session.commit()
