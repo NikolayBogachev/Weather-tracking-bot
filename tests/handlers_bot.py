@@ -1,11 +1,11 @@
 
-from aiogram import Router
+from aiogram import Router, Bot
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 
 from TG.bot import bot
-from TG.funcs import fetch_weather_with_cache
-from database.db import async_session
+from funcs import fetch_weather_with_cache
+from initdb import async_session
 from database.models import log_request, get_user_city, save_user_city
 
 router = Router()
@@ -19,7 +19,7 @@ async def command_start_handler(message: Message):
 
 
 @router.message(Command("weather"))
-async def get_weather(message: Message):
+async def get_weather(message: Message, bot: Bot, redis):
     """
     Обработчик команды /weather для получения прогноза погоды.
     Аргументом команды является название города, если не указан, то используется
@@ -50,7 +50,7 @@ async def get_weather(message: Message):
             return
 
     await message.reply(f"Ищу погоду для города: {city_name}...")
-    weather_data = await fetch_weather_with_cache(city_name, bot, message)
+    weather_data = await fetch_weather_with_cache(city_name, bot, message, redis)
 
     if weather_data:
         """

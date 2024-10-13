@@ -1,17 +1,46 @@
 import pytest
-from httpx import AsyncClient
-from main import app  # предполагается, что FastAPI приложение находится в main.py
+
+from tests.initdb import create_data_1, create_data_2, create_data_3
+
 
 @pytest.mark.asyncio
-async def test_get_logs(mocker):
-    # Мокаем вызов к базе данных
-    mocker.patch('api.handlers.get_logs', return_value=[
-        {'user_id': 1, 'command': '/weather Moscow', 'response': 'Погода в Москве...', 'created_at': '2024-01-01T12:00:00'}
-    ])
-
-    async with AsyncClient(app=app, base_url="http://test.database") as ac:
-        response = await ac.get("/logs")
-
+async def test_unfollow_user(client, setup_database):
+    await create_data_1()
+    response = await client.get("/logs")
     assert response.status_code == 200
     assert len(response.json()) == 1
     assert response.json()[0]['command'] == '/weather Moscow'
+
+@pytest.mark.asyncio
+async def test_get_logs_by_user(client, setup_database):
+    user_id = 1
+    await create_data_2(user_id)
+
+    # Выполните запрос к вашему эндпоинту
+    response = await client.get(f"/logs/{user_id}")
+
+    # Проверьте статус-код ответа
+    assert response.status_code == 200
+
+    # Проверьте, что возвращенные данные соответствуют ожидаемым
+    logs = response.json()
+    assert isinstance(logs, list)
+    assert len(logs) == 1  # Проверка на количество логов
+    assert logs[0]['user_id'] == user_id
+    assert logs[0]['command'] == "test_command"
+    assert logs[0]['response'] == "test_response"
+
+@pytest.mark.asyncio
+async def test_get_logs_by_user_with_dates(client,setup_database):
+    user_id = 1
+    await create_data_3(user_id)
+
+    response = await client.get(f"/logs/{user_id}?start_date=2024-10-01&end_date=2024-10-02")
+
+    # Проверьте статус-код ответа
+    assert response.status_code == 200
+
+    # Проверьте, что возвращенные данные соответствуют ожидаемым
+    logs = response.json()
+    assert isinstance(logs, list)
+    assert len(logs) == 2  # Проверка на количество логов
