@@ -4,9 +4,7 @@ import sys
 
 from TG.bot import dp, bot
 
-from loguru import logger
-
-
+from TG.funcs import init_redis, logger
 from TG.handlers_bot import router
 from config import config
 from database.db import init_db
@@ -20,7 +18,7 @@ async def main() -> None:
     3. Запускает polling для обработки сообщений и команд от пользователей.
     В случае завершения работы, закрывает сессию бота и выводит сообщение о завершении.
     """
-
+    redis = await init_redis()
     # Инициализация базы данных
     init_db()
 
@@ -33,6 +31,7 @@ async def main() -> None:
         # Запуск Polling для отслеживания обновлений в Telegram
         await dp.start_polling(bot)
     finally:
+        await redis.close()  # Закрываем соединение Redis
         # Закрываем сессию бота при завершении
         await bot.session.close()
         logger.info("Сессия бота закрыта.")
@@ -46,10 +45,6 @@ if __name__ == "__main__":
     Также обрабатываются прерывания (KeyboardInterrupt, SystemExit) и
     корректно завершается выполнение бота с логированием.
     """
-
-    # Настраиваем логирование (вывод на консоль, уровень INFO)
-    logger.remove()
-    logger.add(sys.stdout, level="INFO", format="{time} - {level} - {message}")
 
     # Проверка наличия BOT_TOKEN в конфигурации
     if not config.TOKEN:

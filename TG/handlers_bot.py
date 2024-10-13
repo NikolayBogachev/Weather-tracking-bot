@@ -3,7 +3,8 @@ from aiogram import F, Router
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 
-from TG.funcs import fetch_weather
+from TG.bot import bot
+from TG.funcs import fetch_weather, fetch_weather_with_cache
 from database.db import async_session
 from database.models import log_request, get_user_city, save_user_city
 
@@ -54,7 +55,7 @@ async def get_weather(message: Message):
 
     # Запрос погоды через API OpenWeatherMap
     await message.reply(f"Ищу погоду для города: {city_name}...")
-    weather_data = await fetch_weather(city_name)
+    weather_data = await fetch_weather_with_cache(city_name, bot, message)
 
     if weather_data:
         """

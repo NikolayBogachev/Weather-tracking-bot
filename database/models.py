@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import (
@@ -5,7 +6,7 @@ from sqlalchemy import (
     Integer,
     ForeignKey,
     String,
-    TIMESTAMP, BigInteger, select, func
+    TIMESTAMP, BigInteger, select, func, DateTime
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,6 +24,7 @@ class WeatherRequest(Base):
     command = Column(String, nullable=False)
     timestamp = Column(TIMESTAMP, nullable=False, server_default=func.now())
     response = Column(String, nullable=False)
+    created_at = Column(DateTime, default=func.now(), nullable=False)
 
     # Связь с UserSettings
     settings = relationship("UserSettings", back_populates="user", uselist=False)
@@ -40,7 +42,11 @@ class UserSettings(Base):
 
 
 async def log_request(db_session: AsyncSession, user_id: int, command: str, response: str):
-    new_log = WeatherRequest(user_id=user_id, command=command, response=response)
+    created_at = datetime.utcnow()
+    new_log = WeatherRequest(user_id=user_id,
+                             command=command,
+                             response=response,
+                             created_at=created_at)
     db_session.add(new_log)
     await db_session.commit()
 

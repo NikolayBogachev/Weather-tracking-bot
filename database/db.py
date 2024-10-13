@@ -16,5 +16,16 @@ async_session = async_sessionmaker(
 sync_engine = create_engine("sqlite:///./test.database")
 
 
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    session: AsyncSession = async_session()
+    try:
+        yield session
+    except Exception as e:
+        await session.rollback()
+        raise
+    finally:
+        await session.close()
+
+
 def init_db():
     Base.metadata.create_all(bind=sync_engine)
